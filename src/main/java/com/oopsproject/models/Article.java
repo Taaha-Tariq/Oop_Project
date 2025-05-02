@@ -9,7 +9,7 @@ import java.util.Date;
 public class Article {
     // This attribute is to be used as the primary key
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO) // It will have auto generated (auto incremented values)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // It will have auto generated (auto incremented values)
     private Long articleId;
 
     // Defining the attribute title which can't be null
@@ -31,7 +31,7 @@ public class Article {
 
     // Defining the relationship with ArticleCategory entity
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", referencedColumnName = "id")
+    @JoinColumn(name = "category_id", referencedColumnName = "article_category_id")
     private ArticleCategory category;
 
     // Default constructor

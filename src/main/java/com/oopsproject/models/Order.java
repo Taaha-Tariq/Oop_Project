@@ -10,7 +10,7 @@ import java.util.List;
 public class Order {
     // This attribute is to be used as the primary key
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO) // It will have auto generated (auto incremented values)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // It will have auto generated (auto incremented values)
     private Long orderId;
 
     // Defining the relationship with Users entity
@@ -25,7 +25,6 @@ public class Order {
     private Date orderDate;
 
     // Defining the attribute status which is an enumerated type and can't be null
-    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private String status;
 

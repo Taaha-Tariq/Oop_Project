@@ -9,7 +9,8 @@ import java.util.List;
 public class ArticleCategory {
     // This attribute is to be used as the primary key
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO) // It will have auto generated (auto incremented values)
+    @Column(name="article_category_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // It will have auto generated (auto incremented values)
     private Long articleCategoryId;
 
     // Defining the attribute categoryName which must be unique and can't be null

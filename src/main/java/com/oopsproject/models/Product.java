@@ -9,7 +9,7 @@ import java.util.List;
 public class Product {
     // This attribute is to be used as the primary key
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO) // It will have auto generated (auto incremented values)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // It will have auto generated (auto incremented values)
     private int productId;
 
     // Many-to-one relationship with ShopOwner

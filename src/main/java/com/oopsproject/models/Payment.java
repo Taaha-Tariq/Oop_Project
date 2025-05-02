@@ -9,7 +9,7 @@ import java.util.Date;
 public class Payment {
     // This attribute is to be used as the primary key
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO) // It will have auto generated (auto incremented values)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // It will have auto generated (auto incremented values)
     private Long paymentId;
 
     // Defining the relationship with Order entity
@@ -27,12 +27,11 @@ public class Payment {
     private Float amount;
 
     // Defining the attribute paymentMethod which is an enumerated type and can't be null
-    @Enumerated(EnumType.STRING)
     @Column(name = "payment_method", nullable = false)
     private String paymentMethod;
 
     // Defining the attribute status which is an enumerated type and can't be null
-    @Enumerated(EnumType.STRING)
+
     @Column(name = "status", nullable = false)
     private String paymentStatus;
 

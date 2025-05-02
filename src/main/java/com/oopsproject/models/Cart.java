@@ -9,7 +9,7 @@ import java.util.List;
 public class Cart {
     // This attribute is to be used as the primary key
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO) // It will have auto generated (auto incremented values)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // It will have auto generated (auto incremented values)
     private Long cartId;
 
     // Defining the relationship with User entity

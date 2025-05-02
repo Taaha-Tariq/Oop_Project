@@ -9,7 +9,7 @@ import java.util.List;
 public class City {
     // This attribute is to be used as the primary key
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO) // It will have auto generated (auto incremented values)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // It will have auto generated (auto incremented values)
     private Long cityId;
 
     // Defining the attribute cityName which can't be null

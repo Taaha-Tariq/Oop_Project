@@ -8,7 +8,7 @@ import jakarta.persistence.*;
 public class OrderItem {
     // This attribute is to be used as the primary key
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO) // It will have auto generated (auto incremented values)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // It will have auto generated (auto incremented values)
     private Long orderItemId;
 
     // Defining the relationship with Order entity
