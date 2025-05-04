@@ -1,11 +1,12 @@
-package com.oopsproject.sevices;
+package com.oopsproject.services;
 
-import com.oopsproject.models.Users;
-import com.oopsproject.repositories.UsersRepository;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import com.oopsproject.models.Users;
+import com.oopsproject.repositories.UsersRepository;
 
 // Marks the class as a service provider
 @Service

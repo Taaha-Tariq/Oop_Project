@@ -1,7 +1,18 @@
 package com.oopsproject.models;
 
-import jakarta.persistence.*;
 import java.util.List;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorColumn;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -33,11 +44,20 @@ public class Users {
     @OneToOne(mappedBy = "user")
     private Cart cart;
 
+    @Column()
+    private String firstName;
+
+    @Column()
+    private String lastName;
+
     // Constructors
     public Users() {
     }
 
-    public Users(String username, String email, String phoneNumber, String password, String role) {
+    public Users(String username, String email, String phoneNumber, String password, String role, String firstName,
+            String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.username = username;
         this.email = email;
         this.phoneNumber = phoneNumber;
@@ -110,6 +130,22 @@ public class Users {
         this.cart = cart;
     }
 
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -120,6 +156,7 @@ public class Users {
                 ", role=" + role + '}';
     }
 }
+
 //package com.oopsproject.models;
 //
 //import jakarta.persistence.*;

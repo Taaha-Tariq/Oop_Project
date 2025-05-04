@@ -24,8 +24,8 @@ public class CarOwner extends Users {
 
     // Parametrized constructor
     public CarOwner(String username, String email, String phoneNumber,
-                    String password, Address address, Long ownerId) {
-        super(username, email, phoneNumber, password, "CAR_OWNER");
+                    String password, Address address, Long ownerId, String firstName, String lastName) {
+        super(username, email, phoneNumber, password, "CAR_OWNER", firstName, lastName);
         this.address = address;
         this.ownerId = ownerId;
     }

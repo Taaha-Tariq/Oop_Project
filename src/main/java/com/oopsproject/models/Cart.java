@@ -1,7 +1,16 @@
 package com.oopsproject.models;
 
-import jakarta.persistence.*;
 import java.util.List;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 
 // Using the annotation so that this class is mapped to a table in the database
 @Entity
@@ -14,7 +23,7 @@ public class Cart {
 
     // Defining the relationship with User entity
     @OneToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "userId", nullable = false)
     private Users user;
 
     // Defining the relationship with CartItem entities
