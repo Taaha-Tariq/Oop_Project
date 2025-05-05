@@ -12,6 +12,8 @@ import com.oopsproject.dto.LoginRequest;
 import com.oopsproject.models.CarOwner;
 import com.oopsproject.services.CarOwnerService;
 
+import jakarta.servlet.http.HttpSession;
+
 @RestController
 @RequestMapping("/carowner") // Default endpoint (http://localhost:<port>/carowner)
 public class CarOwnerController {
@@ -29,9 +31,14 @@ public class CarOwnerController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpSession session) {
         CarOwner carOwner = carOwnerService.authenticate(loginRequest.getEmail(), loginRequest.getPassword());
         if (carOwner != null) {
+            // Store user data in session
+            session.setAttribute("userId", carOwner.getUserId());
+            session.setAttribute("loginTime", System.currentTimeMillis());
+            session.setAttribute("userType", "carowner"); // Store user type in session
+            
             return ResponseEntity.ok(carOwner);
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");

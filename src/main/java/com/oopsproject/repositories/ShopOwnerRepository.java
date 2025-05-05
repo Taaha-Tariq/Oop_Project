@@ -5,6 +5,5 @@ import com.oopsproject.models.ShopOwner;
 
 public interface ShopOwnerRepository extends JpaRepository<ShopOwner, Long> {
     // Add this method to your repository interface
-    ShopOwner findByEmail(String email);
-    
+    ShopOwner findByEmail(String email);    
 }

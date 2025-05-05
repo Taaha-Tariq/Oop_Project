@@ -11,6 +11,7 @@ import com.oopsproject.repositories.AddressRepository;
 import com.oopsproject.models.Address;
 import com.oopsproject.repositories.CityRepository;
 import com.oopsproject.repositories.CountryRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ShopOwnerService {
@@ -29,6 +30,7 @@ public class ShopOwnerService {
         this.cityRepository = cityRepository;
     }
 
+    @Transactional
     public ShopOwner saveShopOwner(ShopOwner ShopOwner) {
         // Save the address first if it's new
         if (ShopOwner.getAddress() != null && ShopOwner.getAddress().getAddressId() == null) {
@@ -82,10 +84,6 @@ public class ShopOwnerService {
                     ShopOwner.setAddress(savedAddress);
                 }
             }
-        
-        // Save the address after city is handled
-        Address savedAddress = addressRepository.save(ShopOwner.getAddress());
-        ShopOwner.setAddress(savedAddress);
         }
     
         // Hash the password before saving
