@@ -1,8 +1,21 @@
 package com.oopsproject.models;
 
-import jakarta.persistence.*;
 import java.util.Date;
 import java.util.List;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 
 // Using the annotation so that this class is mapped to a table in the database
 @Entity
@@ -15,7 +28,7 @@ public class Order {
 
     // Defining the relationship with Users entity
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "userId", nullable = false)
     private Users user;
 
     // Defining the attribute orderDate which can't be null

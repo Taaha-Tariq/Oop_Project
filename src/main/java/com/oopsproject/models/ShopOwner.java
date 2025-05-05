@@ -23,9 +23,8 @@ public class ShopOwner extends Users {
     public ShopOwner() {
     }
 
-    public ShopOwner(String username, String email, String phoneNumber,
-                     String password, String shopName, Address address, Long shopId) {
-        super(username, email, phoneNumber, password, "SHOP_OWNER");
+    public ShopOwner(String username, String email, String phoneNumber, String password, String shopName, Address address, Long shopId, String firstName, String lastName) {
+        super(username, email, phoneNumber, password, "SHOP_OWNER", firstName, lastName);
         this.shopName = shopName;
         this.address = address;
         this.shopId = shopId;

@@ -1,7 +1,16 @@
 package com.oopsproject.models;
 
-import jakarta.persistence.*;
 import java.util.List;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 // Using the annotation so that this class is mapped to a table in the database
 @Entity
@@ -31,6 +40,11 @@ public class Address {
 
     // Default constructor
     public Address() {
+    }
+
+    // Parametrized constructor
+    public Address(String street) {
+        this.street = street;
     }
 
     // Parametrized constructor
