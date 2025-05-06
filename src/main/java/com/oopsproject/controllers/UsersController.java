@@ -1,52 +1,38 @@
 package com.oopsproject.controllers;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.oopsproject.models.Users;
-import com.oopsproject.services.UsersService;
+import jakarta.servlet.http.HttpSession;
 
 // Defining a Rest endpoint point for our application
 @RestController
 @RequestMapping("/users") // Default endpoint (http://localhost:<port>/users)
 public class UsersController {
-    // Declaring a User service
-    private final UsersService usersService;
-    // Auto wires the beans together
-    @Autowired // Constructor for initializing the usersService
-    public UsersController(UsersService usersService) {
-        this.usersService = usersService;
-    }
-
-    @PostMapping("/user")
-    public ResponseEntity<Users> createUser(@RequestBody Users user) {
-        Users savedUser = usersService.saveUser(user);
-        return ResponseEntity.ok(savedUser);
-    }
-
-    @GetMapping("/")
-    public List<Users> getAllUsers() {
-        return usersService.getAllUsers();
-    }
-
-    @GetMapping("/user/{id}")
-    public ResponseEntity<Users> getUserById(@PathVariable Long id) {
-        Users user = usersService.getUserById(id);
-        return ResponseEntity.ok(user);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteUserById(@PathVariable Long id) {
-        usersService.deleteUserById(id);
-        return ResponseEntity.ok("User deleted successfully");
+    @GetMapping("/session-status")
+    public ResponseEntity<?> checkSessionStatus(HttpSession session) {
+        // Create a response map
+        Map<String, Object> response = new HashMap<>();
+        
+        // Check if session exists and has user attributes
+        if (session != null && session.getAttribute("userId") != null) {
+            // Session is active
+            response.put("active", true);
+            response.put("userId", session.getAttribute("userId"));
+            response.put("userType", session.getAttribute("userType"));
+            response.put("loginTime", session.getAttribute("loginTime"));
+            response.put("sessionId", session.getId());
+            
+            return ResponseEntity.ok(response);
+        } else {
+            // Session is not active
+            response.put("active", false);
+            return ResponseEntity.ok(response);
+        }
     }
 }
