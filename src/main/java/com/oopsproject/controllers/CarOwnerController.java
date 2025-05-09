@@ -1,8 +1,5 @@
 package com.oopsproject.controllers;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -61,5 +58,20 @@ public class CarOwnerController {
         
         // Return a success response
         return ResponseEntity.ok().body("Successfully logged out");
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<?> getProfile(HttpSession session) {
+        // Check if there's an active session
+        if (session != null && session.getAttribute("userId") != null) {
+            // Retrieve user data from session
+            Long userId = (Long) session.getAttribute("userId");
+
+            CarOwner carOwner = carOwnerService.getCarOwnerById(userId);
+            return ResponseEntity.ok(carOwnerService.convertToCarOwnerDTO(carOwner)); 
+        }
+        
+        // Return an error response if no active session or invalid user type
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized access");
     }
 }

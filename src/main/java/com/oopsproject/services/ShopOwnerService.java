@@ -3,7 +3,6 @@ package com.oopsproject.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.oopsproject.models.ShopOwner;
 import com.oopsproject.models.City;
 import com.oopsproject.models.Country;
 import com.oopsproject.repositories.ShopOwnerRepository;
