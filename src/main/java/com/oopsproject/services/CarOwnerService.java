@@ -2,8 +2,15 @@ package com.oopsproject.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import com.oopsproject.models.*;
 import com.oopsproject.dto.*;
 import com.oopsproject.repositories.AddressRepository;
@@ -113,7 +120,10 @@ public class CarOwnerService {
         return carOwner;
     }
 
-    private Cart convertToCartEntity(CartDTO cartDTO) {
+    public Cart convertToCartEntity(CartDTO cartDTO) {
+        if (cartDTO == null) {
+            return null;
+        }
         Cart cart = new Cart();
         cart.setCartId(cartDTO.getCartId());
         cart.setCartItems(cartDTO.getItems() != null ? convertToCartItemEntityList(cartDTO.getItems()) : null);
@@ -162,7 +172,7 @@ public class CarOwnerService {
         return productCategory;
     }
 
-    private List<Order> convertToOrderEntityList(List<OrderDTO> orderDTOs) {
+    public List<Order> convertToOrderEntityList(List<OrderDTO> orderDTOs) {
         List<Order> orders = new ArrayList<>();
         for (OrderDTO orderDTO : orderDTOs) {
             Order order = new Order();
@@ -199,7 +209,7 @@ public class CarOwnerService {
         return orderItems;
     }
 
-    private List<Car> convertToCarEntityList(List<CarDTO> carDTOs) {
+    public List<Car> convertToCarEntityList(List<CarDTO> carDTOs) {
         List<Car> cars = new ArrayList<>();
         for (CarDTO carDTO : carDTOs) {
             Car car = new Car();
@@ -257,7 +267,7 @@ public class CarOwnerService {
         return category;
     }
 
-    private Address convertToAddressEntity(AddressDTO addressDTO) {
+    public Address convertToAddressEntity(AddressDTO addressDTO) {
         Address address = new Address();
         address.setAddressId(addressDTO.getAddressId());
         address.setStreet(addressDTO.getStreet());
@@ -483,5 +493,120 @@ public class CarOwnerService {
 
     public CarOwner getCarOwnerById(Long userId) {
         return carOwnerRepository.findById(userId).orElse(null);
+    }
+
+    @Transactional
+    public CarOwner updateCarOwner(CarOwner carOwner, CarOwnerDTO carOwnerDTO) {
+        // Update the car owner details
+        carOwner.setUsername(carOwnerDTO.getUsername());
+        carOwner.setEmail(carOwnerDTO.getEmail());
+        carOwner.setPhoneNumber(carOwnerDTO.getPhoneNumber());
+        carOwner.setFirstName(carOwnerDTO.getFirstName());
+        carOwner.setLastName(carOwnerDTO.getLastName());
+        carOwner.setPassword(carOwnerDTO.getPassword());
+        
+        // Update the address if provided
+        if (carOwnerDTO.getAddress() != null) {
+            Address address = convertToAddressEntity(carOwnerDTO.getAddress());
+
+            if (address.getCity() != null) {
+                City city = convertToCityEntity(carOwnerDTO.getAddress().getCity());
+                City persistentCity;
+
+                if (city.getCountry() != null) {
+                    Country country = convertToCountryEntity(carOwnerDTO.getAddress().getCity().getCountry());
+                    Country persistentCountry;
+                    Country existingCountry = countryRepository.findByCountryName(country.getCountryName());
+                    if (existingCountry != null) {
+                        persistentCountry = existingCountry;
+                    } else {
+                        persistentCountry = countryRepository.save(country);
+                    }
+                    city.setCountry(persistentCountry);
+                }
+
+                City existingCity = cityRepository.findByCityNameAndCountry_CountryId(
+                    city.getCityName(), city.getCountry().getCountryId());
+                if (existingCity != null) {
+                    persistentCity = existingCity;
+                } else {
+                    persistentCity = cityRepository.save(city);
+                }
+
+                address.setCity(persistentCity);
+            }
+
+            Address existingAddress = addressRepository.findByStreetAndCity_CityId(
+                address.getStreet(), address.getCity().getCityId());   
+            Address persistentAddress;
+            if (existingAddress != null) {
+                persistentAddress = existingAddress;
+            } else {
+                persistentAddress = addressRepository.save(address);
+            }
+
+            carOwner.setAddress(persistentAddress);
+        }
+
+        // FIX: Properly handle the cars collection with orphanRemoval=true
+        if (carOwnerDTO.getCar() != null) {
+            // Get existing cars to compare
+            List<Car> existingCars = carOwner.getCars();
+            if (existingCars == null) {
+                existingCars = new ArrayList<>();
+                carOwner.setCars(existingCars);
+            }
+            
+            // Create map of existing cars by ID for quick lookup
+            Map<Integer, Car> existingCarsMap = new HashMap<>();
+            for (Car car : existingCars) {
+                existingCarsMap.put(car.getCarId(), car);
+            }
+            
+            // Track which cars to keep
+            Set<Integer> processedCarIds = new HashSet<>();
+            // Process cars from DTO
+            for (CarDTO carDTO : carOwnerDTO.getCar()) {
+                if (existingCarsMap.containsKey(carDTO.getCarId())) {
+                    // Update existing car
+                    Car existingCar = existingCarsMap.get(carDTO.getCarId());
+                    existingCar.setModel(carDTO.getModel());
+                    existingCar.setYear(carDTO.getYear());
+                    existingCar.setName(carDTO.getName());
+                    // Update other properties
+                    
+                    processedCarIds.add(carDTO.getCarId());
+                } else {
+                    // Add new car
+                    Car newCar = convertToCarEntity(carDTO);
+                    newCar.setOwner(carOwner);
+                    existingCars.add(newCar);
+                    
+                    
+                    processedCarIds.add(newCar.getCarId());      
+                }
+            }
+            
+            // Remove cars that aren't in the DTO anymore
+            existingCars.removeIf(car -> !processedCarIds.contains(car.getCarId()));
+        }
+
+        carOwner.setOrders(carOwnerDTO.getOrders() != null ? convertToOrderEntityList(carOwnerDTO.getOrders()) : null);
+        carOwner.setCart(carOwnerDTO.getCart() != null ? convertToCartEntity(carOwnerDTO.getCart()) : null);
+        carOwner.setRole("CAR_OWNER");
+        carOwner.setPassword(carOwnerDTO.getPassword());
+
+        return carOwnerRepository.save(carOwner);
+    }
+
+    private Car convertToCarEntity(CarDTO carDTO) {
+        Car car = new Car();
+        car.setCarId(carDTO.getCarId());
+        car.setModel(carDTO.getModel());
+        car.setYear(carDTO.getYear());
+        car.setName(carDTO.getName());
+        car.setCategory(carDTO.getCategory() != null ? convertToCategoryEntity(carDTO.getCategory()) : null);
+        car.setCompany(carDTO.getCompany() != null ? convertToCompanyEntity(carDTO.getCompany()) : null);
+        return car;
     }
 }

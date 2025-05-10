@@ -2,20 +2,20 @@ package com.oopsproject.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.oopsproject.models.City;
-import com.oopsproject.models.Country;
-import com.oopsproject.repositories.ShopOwnerRepository;
-import com.oopsproject.repositories.AddressRepository;
 import com.oopsproject.dto.AddressDTO;
-import com.oopsproject.dto.ShopOwnerDTO;
 import com.oopsproject.dto.CityDTO;
 import com.oopsproject.dto.CountryDTO;
+import com.oopsproject.dto.ShopOwnerDTO;
 import com.oopsproject.models.Address;
+import com.oopsproject.models.City;
+import com.oopsproject.models.Country;
 import com.oopsproject.models.ShopOwner;
+import com.oopsproject.repositories.AddressRepository;
 import com.oopsproject.repositories.CityRepository;
 import com.oopsproject.repositories.CountryRepository;
-import org.springframework.transaction.annotation.Transactional;
+import com.oopsproject.repositories.ShopOwnerRepository;
 
 @Service
 public class ShopOwnerService {
@@ -96,6 +96,10 @@ public class ShopOwnerService {
         
         return ShopOwnerRepository.save(ShopOwner);
     }
+
+    public ShopOwner getShopOwnerById(Long userId) {
+        return ShopOwnerRepository.findById(userId).orElse(null);
+    }
     
     public ShopOwner convertToShopOwnerEntity(ShopOwnerDTO ShopOwnerDTO) {
         ShopOwner ShopOwner = new ShopOwner();
@@ -115,7 +119,7 @@ public class ShopOwnerService {
         return ShopOwner;
     }
 
-    private Address convertToAddressEntity(AddressDTO addressDTO) {
+    public Address convertToAddressEntity(AddressDTO addressDTO) {
         Address address = new Address();
         address.setAddressId(addressDTO.getAddressId());
         address.setStreet(addressDTO.getStreet());
@@ -183,5 +187,85 @@ public class ShopOwnerService {
             return ShopOwner;
         }
         return null;
+    }
+
+    @Transactional
+    public ShopOwner updateShopOwner(ShopOwner shopOwner) {
+        if (shopOwner.getUserId() == null) {
+            throw new IllegalArgumentException("Shop owner ID cannot be null for update operation");
+        }
+        
+        // Verify the shop owner exists
+        ShopOwner existingShopOwner = ShopOwnerRepository.findById(shopOwner.getUserId())
+            .orElseThrow(() -> new RuntimeException("Shop owner not found with ID: " + shopOwner.getUserId()));
+        
+        // Update basic properties
+        existingShopOwner.setFirstName(shopOwner.getFirstName());
+        existingShopOwner.setLastName(shopOwner.getLastName());
+        existingShopOwner.setEmail(shopOwner.getEmail());
+        existingShopOwner.setPhoneNumber(shopOwner.getPhoneNumber());
+        existingShopOwner.setShopName(shopOwner.getShopName());
+        existingShopOwner.setShopPhoneNumber(shopOwner.getShopPhoneNumber());
+        
+        // Handle address update
+        if (shopOwner.getAddress() != null) {
+            Address newAddress = shopOwner.getAddress();
+            
+            // If the address has a city
+            if (newAddress.getCity() != null) {
+                City city = newAddress.getCity();
+                // System.out.println("City: " + city.getCityName());
+                
+                // If the city has a country
+                if (city.getCountry() != null) {
+                    Country country = countryRepository.findByCountryName(city.getCountry().getCountryName());
+                    Country persistentCountry;
+                    if (country != null) {
+                        // Country already exists
+                        persistentCountry = country;
+                    } else {
+                        // Save the new country
+                        persistentCountry = countryRepository.save(new Country(city.getCountry().getCountryName()));
+                    }
+                    // System.out.println("Country: " + persistentCountry.getCountryName());
+                    // System.out.println("City: " + persistentCountry.getCountryId());
+                    // Set the country to the city
+                    city.setCountry(persistentCountry);
+                }
+                
+                // Find or create city
+                City persistentCity;
+                City existingCity = cityRepository.findByCityNameAndCountry_CountryId(
+                    city.getCityName(), city.getCountry().getCountryId());
+                if (existingCity != null) {
+                    // City already exists
+                    persistentCity = existingCity;
+                } else {
+                    // Save the new city
+                    persistentCity = cityRepository.save(new City(city.getCityName(), city.getCountry()));
+                }
+                
+                // Set the city to the address
+                newAddress.setCity(persistentCity);
+            }
+            
+            // Find or create address
+            Address persistentAddress;
+            Address existingAddress = addressRepository.findByStreetAndCity_CityId(
+                newAddress.getStreet(), newAddress.getCity().getCityId());
+            if (existingAddress != null) {
+                // Address already exists
+                persistentAddress = existingAddress;
+            } else {
+                // Save the new address
+                persistentAddress = addressRepository.save(new Address(newAddress.getStreet(), newAddress.getCity()));
+            }
+            
+            // Set the address to the shop owner
+            existingShopOwner.setAddress(persistentAddress);
+        }
+        
+        // Save and return the updated shop owner
+        return ShopOwnerRepository.save(existingShopOwner);
     }
 }
