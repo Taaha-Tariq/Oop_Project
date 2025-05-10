@@ -93,6 +93,13 @@ public class ShopOwnerService {
         // Hash the password before saving
         String hashedPassword = passwordService.hashPassword(ShopOwner.getPassword());
         ShopOwner.setPassword(hashedPassword);
+
+        // Generate shopId if not provided
+        if (ShopOwner.getShopId() == null) {
+            // Get max shopId and increment
+            Long maxShopId = ShopOwnerRepository.findMaxShopId();
+            ShopOwner.setShopId(maxShopId == null ? 1L : maxShopId + 1);
+        }
         
         return ShopOwnerRepository.save(ShopOwner);
     }

@@ -392,6 +392,9 @@ public class CarOwnerService {
     }
 
     private List<ProductImageDTO> convertToProductImageDTOList(List<ProductImage> productImages) {
+        if (productImages == null) {
+            return null;
+        }
         List<ProductImageDTO> productImageDTOs = new ArrayList<>();
         for (ProductImage productImage : productImages) {
             ProductImageDTO productImageDTO = new ProductImageDTO();
