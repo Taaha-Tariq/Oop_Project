@@ -27,13 +27,12 @@ public class CarOwnerService {
     private final CountryRepository countryRepository; 
 
     @Autowired
-    public CarOwnerService(CarOwnerRepository carOwnerRepository, PasswordService passwordService, AddressRepository addressRepository, CityRepository cityRepository, CountryRepository countryRepository, CarRepository carRepository) {
+    public CarOwnerService(CarOwnerRepository carOwnerRepository, PasswordService passwordService, AddressRepository addressRepository, CityRepository cityRepository, CountryRepository countryRepository) {
         this.countryRepository = countryRepository;
         this.carOwnerRepository = carOwnerRepository;
         this.passwordService = passwordService;
         this.addressRepository = addressRepository;
         this.cityRepository = cityRepository;
-        this.carRepository = carRepository;
     }
 
     public CarOwner saveCarOwner(CarOwner carOwner) {
