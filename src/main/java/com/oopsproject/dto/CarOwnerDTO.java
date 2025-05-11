@@ -1,5 +1,8 @@
 package com.oopsproject.dto;
 
+import java.util.List;
+
+
 public class CarOwnerDTO {
     private Long userId;
     private String username;
@@ -9,8 +12,35 @@ public class CarOwnerDTO {
     private AddressDTO address; // Assuming you have an AddressDTO class
     private String firstName;
     private String lastName;
+    private List<CarDTO> car; // Assuming you have a CarDTO class
+    private List<OrderDTO> orders; // Assuming you have an OrderDTO class
+    private CartDTO cart; // Assuming you have a CartDTO class
 
     // Getters and Setters
+    public List<OrderDTO> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<OrderDTO> orders) {
+        this.orders = orders;
+    }
+
+    public CartDTO getCart() {
+        return cart;
+    }
+
+    public void setCart(CartDTO cart) {
+        this.cart = cart;
+    }
+
+    public List<CarDTO> getCar() {
+        return car;
+    }
+
+    public void setCar(List<CarDTO> car) {
+        this.car = car;
+    }
+    
     public Long getUserId() {
         return userId;
     }
