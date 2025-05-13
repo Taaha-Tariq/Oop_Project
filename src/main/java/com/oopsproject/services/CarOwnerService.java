@@ -362,7 +362,7 @@ public class CarOwnerService {
         return cartItemDTOs;
     }
 
-    private ProductDTO convertToProductDTO(Product product) {
+    public ProductDTO convertToProductDTO(Product product) {
         ProductDTO productDTO = new ProductDTO();
         productDTO.setProductId(product.getProductId());
         productDTO.setProductName(product.getProductName());
@@ -611,5 +611,9 @@ public class CarOwnerService {
         car.setCategory(carDTO.getCategory() != null ? convertToCategoryEntity(carDTO.getCategory()) : null);
         car.setCompany(carDTO.getCompany() != null ? convertToCompanyEntity(carDTO.getCompany()) : null);
         return car;
+    }
+
+    public CarOwner findById(Long userId) {
+        return carOwnerRepository.findById(userId).orElse(null);
     }
 }
