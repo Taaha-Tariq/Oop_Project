@@ -20,6 +20,9 @@ public class MaintenanceHistory {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "type")
+    private String type;
+
     @Column(name = "date", nullable = false)
     private Date date;
 
@@ -34,12 +37,13 @@ public class MaintenanceHistory {
     }
 
     // Parametrized constructor
-    public MaintenanceHistory(Car car, String description, Date date, int mileage, float cost) {
+    public MaintenanceHistory(Car car, String description, Date date, int mileage, float cost, String type) {
         this.car = car;
         this.description = description;
         this.date = date;
         this.mileage = mileage;
         this.cost = cost;
+        this.type =type;
     }
 
     // Getters for the field attributes
@@ -92,6 +96,14 @@ public class MaintenanceHistory {
         this.cost = cost;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     // Formatting the object information
     @Override
     public String toString() {
@@ -100,6 +112,7 @@ public class MaintenanceHistory {
                 ", car=" + car.getCarId() +
                 ", description='" + description + '\'' +
                 ", date=" + date +
+                ", type="+ type +
                 ", mileage=" + mileage +
                 ", cost=" + cost +
                 '}';

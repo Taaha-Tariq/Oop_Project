@@ -3,20 +3,12 @@ package com.oopsproject.services;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.oopsproject.dto.*;
+import com.oopsproject.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.oopsproject.dto.CarSaveDTO;
-import com.oopsproject.dto.CategoryDTO;
-import com.oopsproject.dto.CompanyDTO;
-import com.oopsproject.dto.MaintenanceHistoryDTO;
-import com.oopsproject.dto.MaintenanceReminderDTO;
-import com.oopsproject.models.Car;
-import com.oopsproject.models.Category;
-import com.oopsproject.models.Company;
-import com.oopsproject.models.MaintenanceHistory;
-import com.oopsproject.models.MaintenanceReminder;
 import com.oopsproject.repositories.CarRepository;
 import com.oopsproject.repositories.CategoryRepository;
 import com.oopsproject.repositories.CompanyRepository;
@@ -127,11 +119,12 @@ public class CarService {
 
     private MaintenanceHistory convertToMaintenanceHistory(MaintenanceHistoryDTO maintenanceHistoryDTO) {
         MaintenanceHistory maintenanceHistory = new MaintenanceHistory();
-        maintenanceHistory.setMaintenanceId(maintenanceHistoryDTO.getMaintenanceId());
         maintenanceHistory.setDate(maintenanceHistoryDTO.getDate());
+        maintenanceHistory.setCar(carRepository.findByName(maintenanceHistoryDTO.getCarName()));
         maintenanceHistory.setDescription(maintenanceHistoryDTO.getDescription());
         maintenanceHistory.setMileage(maintenanceHistoryDTO.getMileage());
         maintenanceHistory.setCost(maintenanceHistoryDTO.getCost());
+        maintenanceHistory.setType(maintenanceHistory.getType());
         return maintenanceHistory;
     }
 
@@ -180,11 +173,15 @@ public class CarService {
 
     private MaintenanceHistoryDTO convertToMaintenanceHistoryDTO(MaintenanceHistory maintenanceHistory) {
         MaintenanceHistoryDTO maintenanceHistoryDTO = new MaintenanceHistoryDTO();
-        maintenanceHistoryDTO.setMaintenanceId(maintenanceHistory.getMaintenanceId());
         maintenanceHistoryDTO.setDate(maintenanceHistory.getDate());
         maintenanceHistoryDTO.setDescription(maintenanceHistory.getDescription());
         maintenanceHistoryDTO.setMileage(maintenanceHistory.getMileage());
         maintenanceHistoryDTO.setCost(maintenanceHistory.getCost());
+        String carName = carRepository.findById(maintenanceHistory.getCar().getCarId())
+                .map(Car::getName)
+                .orElse("Unknown Car");
+        maintenanceHistoryDTO.setCarName(carName);
+        maintenanceHistoryDTO.setType(maintenanceHistory.getType());
         return maintenanceHistoryDTO;
     }
 
@@ -206,6 +203,14 @@ public class CarService {
         companyDTO.setCompanyId(company.getCompanyId());
         companyDTO.setCompanyName(company.getCompanyName());
         return companyDTO;
+    }
+
+    // to list the all cars owned by the user
+    public List<CarSummaryDTO> getCarSummariesForUser(Long userid) {
+        List<Car> cars = carRepository.findCarsByOwnerId(userid);
+        return cars.stream()
+                .map(car -> new CarSummaryDTO(car.getCarId(), car.getName()))
+                .collect(Collectors.toList());
     }
 
     public Car getCarById(int carId) {

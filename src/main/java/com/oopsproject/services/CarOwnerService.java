@@ -230,7 +230,6 @@ public class CarOwnerService {
         List<MaintenanceHistory> maintenanceHistories = new ArrayList<>();
         for (MaintenanceHistoryDTO maintenanceHistoryDTO : maintenanceHistoryDTOs) {
             MaintenanceHistory maintenanceHistory = new MaintenanceHistory();
-            maintenanceHistory.setMaintenanceId(maintenanceHistoryDTO.getMaintenanceId());
             maintenanceHistory.setDate(maintenanceHistoryDTO.getDate());
             maintenanceHistory.setDescription(maintenanceHistoryDTO.getDescription());
             maintenanceHistory.setCost(maintenanceHistoryDTO.getCost());
@@ -426,7 +425,6 @@ public class CarOwnerService {
         List<MaintenanceHistoryDTO> maintenanceHistoryDTOs = new ArrayList<>();
         for (MaintenanceHistory maintenanceHistory : maintenanceHistories) {
             MaintenanceHistoryDTO maintenanceHistoryDTO = new MaintenanceHistoryDTO();
-            maintenanceHistoryDTO.setMaintenanceId(maintenanceHistory.getMaintenanceId());
             maintenanceHistoryDTO.setDate(maintenanceHistory.getDate());
             maintenanceHistoryDTO.setDescription(maintenanceHistory.getDescription());
             maintenanceHistoryDTO.setCost(maintenanceHistory.getCost());

@@ -3,19 +3,31 @@ package com.oopsproject.dto;
 import java.util.Date;
 
 public class MaintenanceHistoryDTO {
-    private int maintenanceId;
+    private int carId;
+    private String carName; // NEW field
     private Date date;
     private String description;
     private int mileage;
     private float cost;
+    private String type;
+
 
     // Getters and Setters
-    public int getMaintenanceId() {
-        return maintenanceId;
+
+    public int getCarId() {
+        return carId;
     }
 
-    public void setMaintenanceId(int maintenanceId) {
-        this.maintenanceId = maintenanceId;
+    public void setCarId(int carId) {
+        this.carId = carId;
+    }
+
+    public String getCarName() {
+        return carName;
+    }
+
+    public void setCarName(String carName) {
+        this.carName = carName;
     }
 
     public Date getDate() {
@@ -48,5 +60,13 @@ public class MaintenanceHistoryDTO {
 
     public void setCost(float cost) {
         this.cost = cost;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }
