@@ -3,16 +3,24 @@ package com.oopsproject.services;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.oopsproject.dto.*;
-import com.oopsproject.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.oopsproject.dto.CarSaveDTO;
+import com.oopsproject.dto.CarSummaryDTO;
+import com.oopsproject.dto.CategoryDTO;
+import com.oopsproject.dto.CompanyDTO;
+import com.oopsproject.dto.MaintenanceHistoryDTO;
+import com.oopsproject.dto.MaintenanceReminderDTO;
+import com.oopsproject.models.Car;
+import com.oopsproject.models.Category;
+import com.oopsproject.models.Company;
+import com.oopsproject.models.MaintenanceHistory;
+import com.oopsproject.models.MaintenanceReminder;
 import com.oopsproject.repositories.CarRepository;
 import com.oopsproject.repositories.CategoryRepository;
 import com.oopsproject.repositories.CompanyRepository;
-import com.oopsproject.models.CarOwner;
 
 @Service
 public class CarService {

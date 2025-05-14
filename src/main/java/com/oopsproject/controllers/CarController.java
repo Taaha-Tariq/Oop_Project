@@ -1,20 +1,26 @@
 package com.oopsproject.controllers;
 
-import com.oopsproject.dto.CarSummaryDTO;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.oopsproject.dto.CarSaveDTO;
+import com.oopsproject.dto.CarSummaryDTO;
 import com.oopsproject.models.Car;
 import com.oopsproject.models.CarOwner;
 import com.oopsproject.services.CarOwnerService;
 import com.oopsproject.services.CarService;
-import java.util.List;
-import java.util.stream.Collectors;
-import jakarta.servlet.http.HttpSession;
-import org.springframework.web.bind.annotation.GetMapping;
 
-import java.util.List;
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/cars")
@@ -109,7 +115,7 @@ public class CarController {
             Long userId = (Long) session.getAttribute("userId");
         List<CarSummaryDTO> carSummaries = carService.getCarSummariesForUser(userId);
         return ResponseEntity.ok(carSummaries);
-    }
+        }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized access");
     }
 

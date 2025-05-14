@@ -1,16 +1,17 @@
 package com.oopsproject.services;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
 import com.oopsproject.dto.MaintenanceHistoryDTO;
 import com.oopsproject.models.Car;
 import com.oopsproject.models.CarOwner;
 import com.oopsproject.models.MaintenanceHistory;
 import com.oopsproject.repositories.CarRepository;
 import com.oopsproject.repositories.MaintenanceHistoryRepository;
-import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class MaintenanceHistoryService {

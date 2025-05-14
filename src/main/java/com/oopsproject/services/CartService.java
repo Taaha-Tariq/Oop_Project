@@ -5,10 +5,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.oopsproject.models.Cart;
-import com.oopsproject.repositories.CartRepository;
 import com.oopsproject.models.CartItem;
 import com.oopsproject.models.Product;
 import com.oopsproject.repositories.CartItemRepository;
+import com.oopsproject.repositories.CartRepository;
 import com.oopsproject.repositories.ProductRepository;
 
 @Service
@@ -60,6 +60,27 @@ public class CartService {
             cartItem.setProduct(product);
             cartItem.setQuantity(1); // Default quantity
             cartItemRepository.save(cartItem);
+        }
+    }
+
+    // Remove the cart entirely
+    @Transactional
+    public void removeCart(Long cartId) {
+        Cart cart = cartRepository.findById(cartId)
+            .orElseThrow(() -> new RuntimeException("Cart not found"));
+        cartItemRepository.deleteAll(cart.getCartItems());
+        cartRepository.delete(cart);
+    }
+
+    // Remove a specific product from the cart
+    @Transactional
+    public void removeProductFromCart(Long userId, int productId) {
+        Cart cart = cartRepository.findByUserId(userId);
+        if (cart != null) {
+            CartItem cartItem = cartItemRepository.findByCartAndProduct(cart, productRepository.findById(productId).orElse(null));
+            if (cartItem != null) {
+                cartItemRepository.delete(cartItem);
+            }
         }
     }
 }
