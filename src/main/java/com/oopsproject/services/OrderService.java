@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
@@ -84,5 +85,35 @@ public class OrderService {
         responseDTO.setItems(cartItemDTOs);
 
         return responseDTO;
+    }
+
+    public List<OrderResponseDTO> getAllOrdersByUserId(Long userId) {
+        Users user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<Order> orders = orderRepository.findByUser(user);
+
+        return orders.stream().map(order -> {
+            OrderResponseDTO dto = new OrderResponseDTO();
+            dto.setOrderId(order.getId());
+            dto.setOrderDate(order.getOrderDate());
+            dto.setStatus(order.getStatus());
+
+            List<CartItemDTO> itemDTOs = order.getOrderItems().stream().map(orderItem -> {
+                CartItemDTO itemDTO = new CartItemDTO();
+                itemDTO.setQuantity(orderItem.getQuantity());
+
+                ProductDTO productDTO = new ProductDTO();
+                productDTO.setProductId(orderItem.getProduct().getProductId());
+                productDTO.setProductName(orderItem.getProduct().getProductName());
+                productDTO.setPrice(orderItem.getProduct().getPrice());
+
+                itemDTO.setProduct(productDTO);
+                return itemDTO;
+            }).collect(Collectors.toList());
+
+            dto.setItems(itemDTOs);
+            return dto;
+        }).collect(Collectors.toList());
     }
 }
