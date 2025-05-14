@@ -1,26 +1,36 @@
 package com.oopsproject.controllers;
 
-import com.oopsproject.dto.OrderResponseDTO;
-import com.oopsproject.services.OrderService;
-import jakarta.servlet.http.HttpSession;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.oopsproject.dto.OrderResponseDTO;
+import com.oopsproject.services.CartService;
+import com.oopsproject.services.OrderService;
+
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/orders")
 public class OrderController {
 
     private final OrderService orderService;
+    private final CartService cartService;
 
     @Autowired
-    public OrderController(OrderService orderService) {
+    public OrderController(OrderService orderService, CartService cartService) {
+        this.cartService = cartService;
         this.orderService = orderService;
     }
 
-    @PostMapping("/checkout")
-    public ResponseEntity<?> checkout(HttpSession session) {
+    @PostMapping("/checkout/{cartId}")
+    public ResponseEntity<?> checkout(HttpSession session, @PathVariable Long cartId) {
         Long userId = (Long) session.getAttribute("userId");
         if (userId == null) {
             return ResponseEntity.status(401).body(null);
@@ -28,6 +38,7 @@ public class OrderController {
 
         try {
             OrderResponseDTO orderResponse = orderService.createOrderFromCart(userId);
+            cartService.removeCart(cartId);
             return ResponseEntity.ok(orderResponse);
         } catch (Exception e) {
             return ResponseEntity.ok().body("Order placed successfully");
