@@ -63,6 +63,11 @@ public class CartService {
         }
     }
 
+    //use to save cart
+    public void saveCart(Cart cart) {
+        cartRepository.save(cart);
+    }
+
     // Remove the cart entirely
     @Transactional
     public void removeCart(Long cartId) {
