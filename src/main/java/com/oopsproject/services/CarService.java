@@ -20,6 +20,7 @@ import com.oopsproject.models.MaintenanceReminder;
 import com.oopsproject.repositories.CarRepository;
 import com.oopsproject.repositories.CategoryRepository;
 import com.oopsproject.repositories.CompanyRepository;
+import com.oopsproject.models.CarOwner;
 
 @Service
 public class CarService {
@@ -213,5 +214,9 @@ public class CarService {
 
     public void deleteCar(Car car) {
         carRepository.delete(car);
+    }
+
+    public List<Car> getAllCarsByOwner(Long userId) {
+        return carRepository.findByOwner(userId);
     }
 }
