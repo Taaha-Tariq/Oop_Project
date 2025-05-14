@@ -4,14 +4,15 @@ import com.oopsproject.dto.CarSummaryDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import com.oopsproject.dto.CarSaveDTO;
 import com.oopsproject.models.Car;
 import com.oopsproject.models.CarOwner;
 import com.oopsproject.services.CarOwnerService;
 import com.oopsproject.services.CarService;
-
+import java.util.List;
+import java.util.stream.Collectors;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
 
@@ -47,6 +48,28 @@ public class CarController {
 
         CarSaveDTO savedCarDTO = carService.convertToCarSaveDTO(savedCar);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCarDTO); 
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<List<CarSaveDTO>> getAllCars(HttpSession session) {
+        Long userId = (Long) session.getAttribute("userId");
+        // Check if userId is null (not logged in)
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        // Check if the car owner exists
+        CarOwner carOwner = carOwnerService.getCarOwnerById(userId);
+        if (carOwner == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        List<Car> cars = carService.getAllCarsByOwner(userId);
+        List<CarSaveDTO> carDTOs = cars.stream()
+                .map(carService::convertToCarSaveDTO)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(carDTOs);
     }
 
     @DeleteMapping("/{carId}")
